@@ -567,9 +567,7 @@
     if (entry.customName) {
       return sanitizeObjectName(entry.customName);
     }
-    const base = entry.netmask === 32
-      ? entry.ip.replace(/\./g, '_')
-      : `${entry.ip.replace(/\./g, '_')}_${entry.netmask}`;
+    const base = entry.ip.replace(/\./g, '_');
     return sanitizeObjectName(`${prefix}${base}`);
   }
 
