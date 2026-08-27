@@ -1,0 +1,722 @@
+<title>Address Group Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #f5f8f7;
+    --surface: #ffffff;
+    --surface-2: #eef3f1;
+    --border: #d7e0dd;
+    --border-strong: #b9c8c3;
+    --text: #172321;
+    --text-dim: #56655f;
+    --text-faint: #85958e;
+    --accent: #0f8f82;
+    --accent-strong: #0b6f65;
+    --accent-soft: #d6efe9;
+    --amber: #b5680b;
+    --amber-soft: #f6e3c8;
+    --danger: #b3324a;
+    --danger-soft: #f7dde3;
+    --shadow: 0 1px 2px rgba(20, 40, 35, 0.06), 0 8px 24px -12px rgba(20, 40, 35, 0.18);
+    --radius: 10px;
+    --focus: 0 0 0 3px rgba(15, 143, 130, 0.35);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1517;
+      --surface: #161f21;
+      --surface-2: #1c2729;
+      --border: #2a3a3c;
+      --border-strong: #3c4f50;
+      --text: #e7efed;
+      --text-dim: #a3b3ae;
+      --text-faint: #718380;
+      --accent: #5fd0bf;
+      --accent-strong: #7fe0d1;
+      --accent-soft: #1c3a35;
+      --amber: #e0a555;
+      --amber-soft: #3a2e18;
+      --danger: #e88a9c;
+      --danger-soft: #3a1f26;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 28px -14px rgba(0, 0, 0, 0.6);
+      --focus: 0 0 0 3px rgba(95, 208, 191, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1517;
+    --surface: #161f21;
+    --surface-2: #1c2729;
+    --border: #2a3a3c;
+    --border-strong: #3c4f50;
+    --text: #e7efed;
+    --text-dim: #a3b3ae;
+    --text-faint: #718380;
+    --accent: #5fd0bf;
+    --accent-strong: #7fe0d1;
+    --accent-soft: #1c3a35;
+    --amber: #e0a555;
+    --amber-soft: #3a2e18;
+    --danger: #e88a9c;
+    --danger-soft: #3a1f26;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 28px -14px rgba(0, 0, 0, 0.6);
+    --focus: 0 0 0 3px rgba(95, 208, 191, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  header.page {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: linear-gradient(155deg, var(--accent), var(--accent-strong));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--shadow);
+  }
+
+  .brand-mark svg { width: 20px; height: 20px; }
+
+  h1 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .tagline {
+    margin: 0.15rem 0 0;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    max-width: 46ch;
+  }
+
+  .platform-note {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-head h2 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .step-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .panel-body { padding: 1.3rem; display: flex; flex-direction: column; gap: 1.15rem; }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin: 0.35rem 0 0;
+  }
+
+  input[type="text"],
+  textarea,
+  select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    color: var(--text);
+    padding: 0.6rem 0.7rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88rem;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--focus);
+  }
+
+  textarea#ipInput { min-height: 220px; }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .check-row input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .check-row label { margin: 0; font-weight: 500; color: var(--text); }
+
+  fieldset {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 0.9rem 0.95rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  legend {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    padding: 0 0.35rem;
+  }
+
+  .btn {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    padding: 0.62rem 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    transition: filter 0.12s ease, transform 0.05s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: none; box-shadow: var(--focus); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #05201c;
+  }
+  :root[data-theme="dark"] .btn-primary,
+  @media (prefers-color-scheme: dark) { }
+  .btn-primary { color: #05231f; }
+  .btn-primary:hover { filter: brightness(1.06); }
+
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .btn-ghost:hover { background: var(--surface-2); }
+
+  .actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+  .status-line {
+    font-size: 0.78rem;
+    font-family: "IBM Plex Mono", monospace;
+    min-height: 1.1em;
+    color: var(--text-faint);
+  }
+  .status-line.err { color: var(--danger); }
+  .status-line.ok { color: var(--accent-strong); }
+
+  .errors {
+    background: var(--danger-soft);
+    border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+    border-radius: 7px;
+    padding: 0.7rem 0.85rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--danger);
+    display: none;
+    max-height: 140px;
+    overflow-y: auto;
+  }
+  .errors.show { display: block; }
+  .errors div + div { margin-top: 0.2rem; }
+
+  .summary-bar {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 0 1.3rem 1.1rem;
+  }
+  .chip {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.74rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+    color: var(--text-dim);
+  }
+  .chip b { color: var(--text); font-weight: 600; }
+
+  .output-wrap { position: relative; }
+  pre#output {
+    margin: 0;
+    padding: 1.1rem 1.3rem 1.3rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 520px;
+    overflow-y: auto;
+    color: var(--text);
+  }
+  pre#output .cmt { color: var(--text-faint); }
+  pre#output .kw { color: var(--accent-strong); }
+  pre#output .val { color: var(--amber); }
+  pre#output::-webkit-scrollbar { width: 10px; }
+  pre#output::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 6px; }
+
+  .placeholder {
+    padding: 2.2rem 1.3rem;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.88rem;
+  }
+
+  .copy-btn {
+    position: sticky;
+    float: right;
+    top: 0.6rem;
+    margin: 0.6rem 0.9rem 0 0;
+  }
+
+  footer.note {
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.6;
+  }
+  footer.note code {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--surface-2);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="page">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L4 6.5V11c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6.5L12 3z" stroke="#05231f" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M9 12l2 2 4-4.5" stroke="#05231f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Address Group Builder</h1>
+        <p class="tagline">Paste a list of IPs, name the group, get ready-to-paste PAN-OS CLI to create the address objects and the group in one shot.</p>
+      </div>
+    </div>
+    <span class="platform-note">PAN-OS &middot; set-format CLI</span>
+  </header>
+
+  <div class="grid">
+    <!-- INPUT PANEL -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Inputs</h2>
+        <span class="step-tag">1 · define</span>
+      </div>
+      <div class="panel-body">
+        <div>
+          <label for="groupName">Address group name</label>
+          <input type="text" id="groupName" placeholder="e.g. BLOCKLIST-EXTERNAL" autocomplete="off" spellcheck="false">
+          <p class="hint">Used as-is in <code style="font-family:'IBM Plex Mono',monospace">set address-group</code>. No spaces — PAN-OS will reject them.</p>
+        </div>
+
+        <div>
+          <label for="ipInput">IP addresses</label>
+          <textarea id="ipInput" placeholder="10.0.0.1
+192.168.1.0/24
+203.0.113.10  vendor-vpn-endpoint
+198.51.100.0/28
+# lines starting with # are ignored" spellcheck="false"></textarea>
+          <p class="hint">One entry per line. Plain IPs, CIDR (<code style="font-family:'IBM Plex Mono',monospace">/24</code>), or <code style="font-family:'IBM Plex Mono',monospace">IP&nbsp;name</code> to set a custom object name. Blank lines and <code style="font-family:'IBM Plex Mono',monospace">#</code> comments are skipped.</p>
+        </div>
+
+        <fieldset>
+          <legend>Object naming</legend>
+          <div class="row2">
+            <div>
+              <label for="prefix">Prefix</label>
+              <input type="text" id="prefix" value="H-" autocomplete="off" spellcheck="false">
+            </div>
+            <div>
+              <label for="tag">Tag (optional)</label>
+              <input type="text" id="tag" placeholder="e.g. blocklist" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+          <div>
+            <label for="descr">Description (optional, applied to every object)</label>
+            <input type="text" id="descr" placeholder="e.g. Added via bulk IP tool" autocomplete="off" spellcheck="false">
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Output options</legend>
+          <div class="check-row">
+            <input type="checkbox" id="optDedupe" checked>
+            <label for="optDedupe">Skip duplicate IPs/prefixes</label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="optCommit">
+            <label for="optCommit">Append <code style="font-family:'IBM Plex Mono',monospace">commit</code> at the end</label>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="optVsys">
+            <label for="optVsys">Target a specific vsys / virtual system</label>
+          </div>
+          <input type="text" id="vsysName" placeholder="vsys name, e.g. vsys1" style="display:none; margin-top:0.35rem;" autocomplete="off" spellcheck="false">
+        </fieldset>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="generateBtn">Generate CLI</button>
+          <button class="btn btn-ghost" id="clearBtn">Clear</button>
+        </div>
+        <div class="status-line" id="statusLine"></div>
+        <div class="errors" id="errorBox"></div>
+      </div>
+    </section>
+
+    <!-- OUTPUT PANEL -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Generated script</h2>
+        <span class="step-tag">2 · run</span>
+      </div>
+      <div class="summary-bar" id="summaryBar"></div>
+      <div class="output-wrap">
+        <button class="btn btn-ghost copy-btn" id="copyBtn" style="display:none;">Copy</button>
+        <pre id="output"><div class="placeholder" style="display:block;">Fill in the fields on the left and click <strong>Generate CLI</strong> — the script will appear here.</div></pre>
+      </div>
+    </section>
+  </div>
+
+  <footer class="note">
+    Paste the generated block into the CLI on the target firewall or Panorama device group (configure mode), or split it into a bootstrap/init-cfg file. Object names are shortened to PAN-OS's 63-character limit automatically. This runs entirely in your browser — nothing is sent anywhere.
+  </footer>
+</div>
+
+<script>
+(function () {
+  const groupNameEl = document.getElementById('groupName');
+  const ipInputEl = document.getElementById('ipInput');
+  const prefixEl = document.getElementById('prefix');
+  const tagEl = document.getElementById('tag');
+  const descrEl = document.getElementById('descr');
+  const optDedupe = document.getElementById('optDedupe');
+  const optCommit = document.getElementById('optCommit');
+  const optVsys = document.getElementById('optVsys');
+  const vsysName = document.getElementById('vsysName');
+  const generateBtn = document.getElementById('generateBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const statusLine = document.getElementById('statusLine');
+  const errorBox = document.getElementById('errorBox');
+  const summaryBar = document.getElementById('summaryBar');
+  const output = document.getElementById('output');
+  const copyBtn = document.getElementById('copyBtn');
+
+  optVsys.addEventListener('change', () => {
+    vsysName.style.display = optVsys.checked ? 'block' : 'none';
+  });
+
+  function isValidOctets(parts) {
+    return parts.every(p => /^\d+$/.test(p) && Number(p) >= 0 && Number(p) <= 255);
+  }
+
+  function parseLine(raw, lineNo) {
+    let line = raw.trim();
+    if (!line || line.startsWith('#')) return null;
+
+    // strip inline trailing comment
+    const hashIdx = line.indexOf(' #');
+    if (hashIdx > -1) line = line.slice(0, hashIdx).trim();
+
+    // split into ip/cidr token + optional custom name (rest of line)
+    // separators allowed: whitespace or comma
+    const m = line.match(/^([^\s,]+)[\s,]*(.*)$/);
+    if (!m) return { error: `Line ${lineNo}: could not parse "${raw}"` };
+
+    let token = m[1];
+    let customName = m[2] ? m[2].trim() : '';
+
+    let ip = token, mask = null;
+    if (token.includes('/')) {
+      const bits = token.split('/');
+      if (bits.length !== 2) return { error: `Line ${lineNo}: malformed CIDR "${token}"` };
+      ip = bits[0];
+      mask = bits[1];
+      if (!/^\d+$/.test(mask) || Number(mask) < 0 || Number(mask) > 32) {
+        return { error: `Line ${lineNo}: invalid prefix length "/${mask}" in "${token}"` };
+      }
+    }
+
+    const octets = ip.split('.');
+    if (octets.length !== 4 || !isValidOctets(octets)) {
+      return { error: `Line ${lineNo}: "${token}" is not a valid IPv4 address` };
+    }
+
+    const netmask = mask !== null ? Number(mask) : 32;
+    const ipNetmask = `${ip}/${netmask}`;
+    return { ip, netmask, ipNetmask, customName, raw: line };
+  }
+
+  function sanitizeObjectName(name) {
+    // PAN-OS names: letters, numbers, spaces, and . _ - are safe; keep it simple & valid
+    let n = name.replace(/[^A-Za-z0-9._-]/g, '-');
+    if (n.length > 63) n = n.slice(0, 63);
+    return n;
+  }
+
+  function buildObjectName(prefix, entry) {
+    if (entry.customName) {
+      return sanitizeObjectName(entry.customName);
+    }
+    const base = entry.netmask === 32
+      ? entry.ip.replace(/\./g, '-')
+      : `${entry.ip.replace(/\./g, '-')}-${entry.netmask}`;
+    return sanitizeObjectName(`${prefix}${base}`);
+  }
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlight(text) {
+    // Colorize leading "set" keyword and quoted/value tokens loosely for legibility.
+    return text.split('\n').map(line => {
+      if (line.startsWith('#')) return `<span class="cmt">${esc(line)}</span>`;
+      if (line.trim() === '') return '';
+      const escaped = esc(line);
+      return escaped.replace(/^(set|edit|delete|commit)\b/, '<span class="kw">$1</span>');
+    }).join('\n');
+  }
+
+  function setStatus(msg, kind) {
+    statusLine.textContent = msg || '';
+    statusLine.className = 'status-line' + (kind ? ' ' + kind : '');
+  }
+
+  function resetOutput() {
+    output.innerHTML = '<div class="placeholder" style="display:block;">Fill in the fields on the left and click <strong>Generate CLI</strong> — the script will appear here.</div>';
+    copyBtn.style.display = 'none';
+    summaryBar.innerHTML = '';
+  }
+
+  function generate() {
+    const group = groupNameEl.value.trim();
+    const lines = ipInputEl.value.split('\n');
+    const prefix = prefixEl.value || '';
+    const tag = tagEl.value.trim();
+    const descr = descrEl.value.trim();
+    const dedupe = optDedupe.checked;
+    const commit = optCommit.checked;
+    const vsys = optVsys.checked ? vsysName.value.trim() : '';
+
+    errorBox.classList.remove('show');
+    errorBox.innerHTML = '';
+
+    if (!group) {
+      setStatus('Enter an address group name to continue.', 'err');
+      groupNameEl.focus();
+      return;
+    }
+    if (/\s/.test(group)) {
+      setStatus('Group name cannot contain spaces.', 'err');
+      groupNameEl.focus();
+      return;
+    }
+
+    const entries = [];
+    const errors = [];
+    const seen = new Set();
+
+    lines.forEach((raw, idx) => {
+      const parsed = parseLine(raw, idx + 1);
+      if (parsed === null) return;
+      if (parsed.error) { errors.push(parsed.error); return; }
+      if (dedupe) {
+        const key = parsed.ipNetmask;
+        if (seen.has(key)) return;
+        seen.add(key);
+      }
+      entries.push(parsed);
+    });
+
+    if (errors.length) {
+      errorBox.innerHTML = errors.map(e => `<div>${esc(e)}</div>`).join('');
+      errorBox.classList.add('show');
+    }
+
+    if (entries.length === 0) {
+      setStatus(errors.length ? 'No valid IP lines found — fix the errors above.' : 'Add at least one IP address.', 'err');
+      resetOutput();
+      return;
+    }
+
+    // build object names, guarding against collisions
+    const usedNames = new Set();
+    const objects = entries.map(entry => {
+      let name = buildObjectName(prefix, entry);
+      let candidate = name;
+      let n = 2;
+      while (usedNames.has(candidate)) {
+        candidate = sanitizeObjectName(`${name}-${n}`);
+        n++;
+      }
+      usedNames.add(candidate);
+      return { name: candidate, ipNetmask: entry.ipNetmask };
+    });
+
+    const vsysPrefix = vsys ? `set vsys ${vsys} ` : 'set ';
+
+    const cmds = [];
+    cmds.push(`# Address objects (${objects.length})`);
+    objects.forEach(o => {
+      cmds.push(`${vsysPrefix}address ${o.name} ip-netmask ${o.ipNetmask}`);
+      if (descr) cmds.push(`${vsysPrefix}address ${o.name} description "${descr.replace(/"/g, '\\"')}"`);
+      if (tag) cmds.push(`${vsysPrefix}address ${o.name} tag [ ${tag} ]`);
+    });
+    cmds.push('');
+    cmds.push(`# Address group`);
+    cmds.push(`${vsysPrefix}address-group ${group} static [ ${objects.map(o => o.name).join(' ')} ]`);
+    if (commit) {
+      cmds.push('');
+      cmds.push('commit');
+    }
+
+    const text = cmds.join('\n');
+    output.innerHTML = highlight(text);
+    output.dataset.raw = text;
+    copyBtn.style.display = 'inline-flex';
+
+    summaryBar.innerHTML = `
+      <span class="chip"><b>${objects.length}</b> object${objects.length === 1 ? '' : 's'}</span>
+      <span class="chip">group <b>${esc(group)}</b></span>
+      ${tag ? `<span class="chip">tag <b>${esc(tag)}</b></span>` : ''}
+      ${vsys ? `<span class="chip">vsys <b>${esc(vsys)}</b></span>` : ''}
+      ${errors.length ? `<span class="chip" style="color:var(--danger)">${errors.length} skipped</span>` : ''}
+    `;
+
+    setStatus(`Generated ${cmds.filter(l => l.startsWith('set')).length} set command(s).`, 'ok');
+  }
+
+  copyBtn.addEventListener('click', async () => {
+    const raw = output.dataset.raw || '';
+    if (!raw) return;
+    try {
+      await navigator.clipboard.writeText(raw);
+      copyBtn.textContent = 'Copied';
+      setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1400);
+    } catch (e) {
+      setStatus('Could not copy automatically — select the text manually.', 'err');
+    }
+  });
+
+  generateBtn.addEventListener('click', generate);
+  clearBtn.addEventListener('click', () => {
+    groupNameEl.value = '';
+    ipInputEl.value = '';
+    tagEl.value = '';
+    descrEl.value = '';
+    prefixEl.value = 'H-';
+    optVsys.checked = false;
+    vsysName.style.display = 'none';
+    vsysName.value = '';
+    errorBox.classList.remove('show');
+    errorBox.innerHTML = '';
+    setStatus('');
+    resetOutput();
+    groupNameEl.focus();
+  });
+})();
+</script>
