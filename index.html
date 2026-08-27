@@ -428,7 +428,7 @@
           <div class="row2">
             <div>
               <label for="prefix">Prefix</label>
-              <input type="text" id="prefix" value="H-" autocomplete="off" spellcheck="false">
+              <input type="text" id="prefix" value="H_" autocomplete="off" spellcheck="false">
             </div>
             <div>
               <label for="tag">Tag (optional)</label>
@@ -558,7 +558,7 @@
 
   function sanitizeObjectName(name) {
     // PAN-OS names: letters, numbers, spaces, and . _ - are safe; keep it simple & valid
-    let n = name.replace(/[^A-Za-z0-9._-]/g, '-');
+    let n = name.replace(/[^A-Za-z0-9._-]/g, '_');
     if (n.length > 63) n = n.slice(0, 63);
     return n;
   }
@@ -568,8 +568,8 @@
       return sanitizeObjectName(entry.customName);
     }
     const base = entry.netmask === 32
-      ? entry.ip.replace(/\./g, '-')
-      : `${entry.ip.replace(/\./g, '-')}-${entry.netmask}`;
+      ? entry.ip.replace(/\./g, '_')
+      : `${entry.ip.replace(/\./g, '_')}_${entry.netmask}`;
     return sanitizeObjectName(`${prefix}${base}`);
   }
 
@@ -662,7 +662,7 @@
       let candidate = name;
       let n = 2;
       while (usedNames.has(candidate)) {
-        candidate = sanitizeObjectName(`${name}-${n}`);
+        candidate = sanitizeObjectName(`${name}_${n}`);
         n++;
       }
       usedNames.add(candidate);
@@ -728,7 +728,7 @@
     ipInputEl.value = '';
     tagEl.value = '';
     descrEl.value = '';
-    prefixEl.value = 'H-';
+    prefixEl.value = 'H_';
     optVsys.checked = false;
     vsysName.style.display = 'none';
     vsysName.value = '';
