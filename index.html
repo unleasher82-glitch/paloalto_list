@@ -567,8 +567,7 @@
     if (entry.customName) {
       return sanitizeObjectName(entry.customName);
     }
-    const base = entry.ip.replace(/\./g, '_');
-    return sanitizeObjectName(`${prefix}${base}`);
+    return sanitizeObjectName(`${prefix}${entry.ip}`);
   }
 
   function esc(s) {
