@@ -618,6 +618,7 @@
 
     const entries = [];
     const errors = [];
+    const duplicates = [];
     const seen = new Set();
 
     lines.forEach((raw, idx) => {
@@ -626,14 +627,18 @@
       if (parsed.error) { errors.push(parsed.error); return; }
       if (dedupe) {
         const key = parsed.ipNetmask;
-        if (seen.has(key)) return;
+        if (seen.has(key)) {
+          duplicates.push(`Line ${idx + 1}: ${parsed.ipNetmask} — duplicate, skipped`);
+          return;
+        }
         seen.add(key);
       }
       entries.push(parsed);
     });
 
-    if (errors.length) {
-      errorBox.innerHTML = errors.map(e => `<div>${esc(e)}</div>`).join('');
+    const noticeLines = [...errors, ...duplicates];
+    if (noticeLines.length) {
+      errorBox.innerHTML = noticeLines.map(e => `<div>${esc(e)}</div>`).join('');
       errorBox.classList.add('show');
     }
 
@@ -684,10 +689,19 @@
       <span class="chip">group <b>${esc(group)}</b></span>
       ${tag ? `<span class="chip">tag <b>${esc(tag)}</b></span>` : ''}
       ${vsys ? `<span class="chip">vsys <b>${esc(vsys)}</b></span>` : ''}
-      ${errors.length ? `<span class="chip" style="color:var(--danger)">${errors.length} skipped</span>` : ''}
+      ${duplicates.length ? `<span class="chip" style="color:var(--amber)"><b>${duplicates.length}</b> duplicate${duplicates.length === 1 ? '' : 's'} skipped</span>` : ''}
+      ${errors.length ? `<span class="chip" style="color:var(--danger)"><b>${errors.length}</b> invalid line${errors.length === 1 ? '' : 's'} skipped</span>` : ''}
     `;
 
-    setStatus(`Generated ${cmds.filter(l => l.startsWith('set')).length} set command(s).`, 'ok');
+    const consideredLines = entries.length + errors.length + duplicates.length;
+    let statusMsg = `Generated ${objects.length} address object${objects.length === 1 ? '' : 's'} from ${consideredLines} IP line${consideredLines === 1 ? '' : 's'}.`;
+    if (duplicates.length) {
+      statusMsg += ` ${duplicates.length} duplicate${duplicates.length === 1 ? ' was' : 's were'} skipped.`;
+    }
+    if (errors.length) {
+      statusMsg += ` ${errors.length} invalid line${errors.length === 1 ? '' : 's'} skipped.`;
+    }
+    setStatus(statusMsg, 'ok');
   }
 
   copyBtn.addEventListener('click', async () => {
