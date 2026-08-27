@@ -448,6 +448,10 @@
             <label for="optDedupe">Skip duplicate IPs/prefixes</label>
           </div>
           <div class="check-row">
+            <input type="checkbox" id="optConfigureWrap" checked>
+            <label for="optConfigureWrap">Enter configuration mode automatically (adds <code style="font-family:'IBM Plex Mono',monospace">configure</code> at the top)</label>
+          </div>
+          <div class="check-row">
             <input type="checkbox" id="optCommit">
             <label for="optCommit">Append <code style="font-family:'IBM Plex Mono',monospace">commit</code> at the end</label>
           </div>
@@ -456,6 +460,7 @@
             <label for="optVsys">Target a specific vsys / virtual system</label>
           </div>
           <input type="text" id="vsysName" placeholder="vsys name, e.g. vsys1" style="display:none; margin-top:0.35rem;" autocomplete="off" spellcheck="false">
+          <p class="hint">The generated <code style="font-family:'IBM Plex Mono',monospace">set</code> commands only work in configuration mode (prompt ends in <code style="font-family:'IBM Plex Mono',monospace">#</code>, not <code style="font-family:'IBM Plex Mono',monospace">&gt;</code>). Leave the box above checked unless you're pasting into a script that already runs <code style="font-family:'IBM Plex Mono',monospace">configure</code> itself.</p>
         </fieldset>
 
         <div class="actions">
@@ -494,6 +499,7 @@
   const tagEl = document.getElementById('tag');
   const descrEl = document.getElementById('descr');
   const optDedupe = document.getElementById('optDedupe');
+  const optConfigureWrap = document.getElementById('optConfigureWrap');
   const optCommit = document.getElementById('optCommit');
   const optVsys = document.getElementById('optVsys');
   const vsysName = document.getElementById('vsysName');
@@ -577,7 +583,7 @@
       if (line.startsWith('#')) return `<span class="cmt">${esc(line)}</span>`;
       if (line.trim() === '') return '';
       const escaped = esc(line);
-      return escaped.replace(/^(set|edit|delete|commit)\b/, '<span class="kw">$1</span>');
+      return escaped.replace(/^(configure|set|edit|delete|commit|exit)\b/, '<span class="kw">$1</span>');
     }).join('\n');
   }
 
@@ -599,6 +605,7 @@
     const tag = tagEl.value.trim();
     const descr = descrEl.value.trim();
     const dedupe = optDedupe.checked;
+    const configureWrap = optConfigureWrap.checked;
     const commit = optCommit.checked;
     const vsys = optVsys.checked ? vsysName.value.trim() : '';
 
@@ -664,20 +671,19 @@
 
     const vsysPrefix = vsys ? `set vsys ${vsys} ` : 'set ';
 
+    // Every line below is a real CLI command — no "#" comments, since PAN-OS
+    // does not treat "#" as a comment character in either operational or
+    // configuration mode and will reject it as "Unknown command".
     const cmds = [];
-    cmds.push(`# Address objects (${objects.length})`);
+    if (configureWrap) cmds.push('configure');
     objects.forEach(o => {
       cmds.push(`${vsysPrefix}address ${o.name} ip-netmask ${o.ipNetmask}`);
       if (descr) cmds.push(`${vsysPrefix}address ${o.name} description "${descr.replace(/"/g, '\\"')}"`);
       if (tag) cmds.push(`${vsysPrefix}address ${o.name} tag [ ${tag} ]`);
     });
-    cmds.push('');
-    cmds.push(`# Address group`);
     cmds.push(`${vsysPrefix}address-group ${group} static [ ${objects.map(o => o.name).join(' ')} ]`);
-    if (commit) {
-      cmds.push('');
-      cmds.push('commit');
-    }
+    if (commit) cmds.push('commit');
+    if (configureWrap) cmds.push('exit');
 
     const text = cmds.join('\n');
     output.innerHTML = highlight(text);
