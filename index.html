@@ -420,7 +420,7 @@
 203.0.113.10  vendor-vpn-endpoint
 198.51.100.0/28
 # lines starting with # are ignored" spellcheck="false"></textarea>
-          <p class="hint">One entry per line. Plain IPs, CIDR (<code style="font-family:'IBM Plex Mono',monospace">/24</code>), or <code style="font-family:'IBM Plex Mono',monospace">IP&nbsp;name</code> to set a custom object name. Blank lines and <code style="font-family:'IBM Plex Mono',monospace">#</code> comments are skipped.</p>
+          <p class="hint">One IP per line, or several separated by commas on one line — both can be mixed. Plain IPs, CIDR (<code style="font-family:'IBM Plex Mono',monospace">/24</code>), or <code style="font-family:'IBM Plex Mono',monospace">IP&nbsp;name</code> to set a custom object name. Blank lines and <code style="font-family:'IBM Plex Mono',monospace">#</code> comments are skipped.</p>
         </div>
 
         <fieldset>
@@ -519,6 +519,18 @@
     return parts.every(p => /^\d+$/.test(p) && Number(p) >= 0 && Number(p) <= 255);
   }
 
+  // Break the textarea into individual entries. Each newline-separated line
+  // may itself hold several comma-separated IPs (e.g. pasted from a report:
+  // "1.2.3.4, 5.6.7.8, 9.10.11.12"), so split on commas within a line too.
+  function splitEntries(text) {
+    const segments = [];
+    text.split('\n').forEach((line, idx) => {
+      const lineNo = idx + 1;
+      line.split(',').forEach(part => segments.push({ raw: part, lineNo }));
+    });
+    return segments;
+  }
+
   function parseLine(raw, lineNo) {
     let line = raw.trim();
     if (!line || line.startsWith('#')) return null;
@@ -527,9 +539,9 @@
     const hashIdx = line.indexOf(' #');
     if (hashIdx > -1) line = line.slice(0, hashIdx).trim();
 
-    // split into ip/cidr token + optional custom name (rest of line)
-    // separators allowed: whitespace or comma
-    const m = line.match(/^([^\s,]+)[\s,]*(.*)$/);
+    // split into ip/cidr token + optional custom name (rest of the entry,
+    // whitespace-separated — commas are already handled by splitEntries)
+    const m = line.match(/^(\S+)\s*(.*)$/);
     if (!m) return { error: `Line ${lineNo}: could not parse "${raw}"` };
 
     let token = m[1];
@@ -597,7 +609,7 @@
 
   function generate() {
     const group = groupNameEl.value.trim();
-    const lines = ipInputEl.value.split('\n');
+    const segments = splitEntries(ipInputEl.value);
     const prefix = prefixEl.value || '';
     const tag = tagEl.value.trim();
     const descr = descrEl.value.trim();
@@ -625,14 +637,14 @@
     const duplicates = [];
     const seen = new Set();
 
-    lines.forEach((raw, idx) => {
-      const parsed = parseLine(raw, idx + 1);
+    segments.forEach(({ raw, lineNo }) => {
+      const parsed = parseLine(raw, lineNo);
       if (parsed === null) return;
       if (parsed.error) { errors.push(parsed.error); return; }
       if (dedupe) {
         const key = parsed.ipNetmask;
         if (seen.has(key)) {
-          duplicates.push(`Line ${idx + 1}: ${parsed.ipNetmask} — duplicate, skipped`);
+          duplicates.push(`Line ${lineNo}: ${parsed.ipNetmask} — duplicate, skipped`);
           return;
         }
         seen.add(key);
