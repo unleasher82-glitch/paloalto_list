@@ -1,0 +1,12 @@
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'self' https://alizerotrust.com
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+/
+  Content-Type: text/html; charset=utf-8
+
+/index.html
+  Content-Type: text/html; charset=utf-8
