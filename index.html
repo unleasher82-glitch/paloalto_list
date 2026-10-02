@@ -356,37 +356,65 @@
   }
   .chip b { color: var(--text); font-weight: 600; }
 
-  .output-wrap { position: relative; }
-  pre#output {
+  .output-wrap { display: flex; flex-direction: column; }
+  #output {
+    max-height: 640px;
+    overflow-y: auto;
+    color: var(--text);
+  }
+  #output::-webkit-scrollbar { width: 10px; }
+  #output::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 6px; }
+
+  .cmd-block { border-top: 1px solid var(--border); }
+  .cmd-block:first-child { border-top: 0; }
+  .cmd-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 1.3rem;
+    background: var(--surface-2);
+  }
+  .cmd-title { font-size: 0.82rem; font-weight: 600; }
+  .cmd-meta {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-left: 0.5rem;
+    font-weight: 400;
+  }
+  .cmd-copy { padding: 0.3rem 0.75rem; font-size: 0.78rem; }
+  .cmd-body {
     margin: 0;
-    padding: 1.1rem 1.3rem 1.3rem;
+    padding: 0.9rem 1.3rem 1rem;
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.82rem;
     line-height: 1.65;
     white-space: pre-wrap;
-    word-break: break-word;
-    max-height: 520px;
-    overflow-y: auto;
+    word-break: break-all;
     color: var(--text);
   }
-  pre#output .cmt { color: var(--text-faint); }
-  pre#output .kw { color: var(--accent-strong); }
-  pre#output .val { color: var(--amber); }
-  pre#output::-webkit-scrollbar { width: 10px; }
-  pre#output::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 6px; }
+  .cmd-body .kw { color: var(--accent-strong); }
+
+  .paste-note {
+    padding: 0.8rem 1.3rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .paste-note[hidden] { display: none; }
 
   .placeholder {
     padding: 2.2rem 1.3rem;
     text-align: center;
     color: var(--text-faint);
     font-size: 0.88rem;
-  }
-
-  .copy-btn {
-    position: sticky;
-    float: right;
-    top: 0.6rem;
-    margin: 0.6rem 0.9rem 0 0;
   }
 
   footer.note {
@@ -507,14 +535,17 @@
       </div>
       <div class="summary-bar" id="summaryBar"></div>
       <div class="output-wrap">
-        <button class="btn btn-ghost copy-btn" id="copyBtn" style="display:none;">Copy</button>
-        <pre id="output"><div class="placeholder" style="display:block;">Fill in the fields on the left and click <strong>Generate CLI</strong> — the script will appear here.</div></pre>
+        <div id="output"><div class="placeholder">Fill in the fields on the left and click <strong>Generate CLI</strong> — the script will appear here.</div></div>
+        <div class="paste-note" id="pasteNote" hidden>
+          <span>Paste each step one at a time and wait for the prompt to return before the next. Pasting everything at once can make PAN-OS reject lines as unknown.</span>
+          <button class="btn btn-ghost cmd-copy" id="copyAllBtn" type="button">Copy everything</button>
+        </div>
       </div>
     </section>
   </div>
 
   <footer class="note">
-    Paste the generated block into the CLI on the target firewall or Panorama device group (configure mode), or split it into a bootstrap/init-cfg file. Object names are shortened to PAN-OS's 63-character limit automatically. This runs entirely in your browser — nothing is sent anywhere.
+    Paste the steps one at a time into the CLI on the target firewall, waiting for the prompt to return between pastes. Long lists are split into small steps because PAN-OS can reject lines from a very large single paste. Object names are shortened to PAN-OS's 63-character limit automatically. This runs entirely in your browser — nothing is sent anywhere.
   </footer>
 </div>
 
@@ -536,7 +567,20 @@
   const errorBox = document.getElementById('errorBox');
   const summaryBar = document.getElementById('summaryBar');
   const output = document.getElementById('output');
-  const copyBtn = document.getElementById('copyBtn');
+  const copyAllBtn = document.getElementById('copyAllBtn');
+  const pasteNote = document.getElementById('pasteNote');
+  let currentBlocks = [];
+
+  // PAN-OS CLI drops or rejects lines when a large paste arrives faster than
+  // it can process, so the script is split into small steps pasted one by one.
+  const OBJECTS_PER_BLOCK = 40;
+  const MEMBERS_PER_LINE = 20;
+
+  function chunk(arr, n) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n));
+    return out;
+  }
 
   optVsys.addEventListener('change', () => {
     vsysName.style.display = optVsys.checked ? 'block' : 'none';
@@ -629,8 +673,9 @@
   }
 
   function resetOutput() {
-    output.innerHTML = '<div class="placeholder" style="display:block;">Fill in the fields on the left and click <strong>Generate CLI</strong> — the script will appear here.</div>';
-    copyBtn.style.display = 'none';
+    output.innerHTML = '<div class="placeholder">Fill in the fields on the left and click <strong>Generate CLI</strong> — the script will appear here.</div>';
+    pasteNote.hidden = true;
+    currentBlocks = [];
     summaryBar.innerHTML = '';
   }
 
@@ -710,21 +755,45 @@
     // Every line below is a real CLI command — no "#" comments, since PAN-OS
     // does not treat "#" as a comment character in either operational or
     // configuration mode and will reject it as "Unknown command".
-    const cmds = [];
-    if (configureWrap) cmds.push('configure');
-    objects.forEach(o => {
-      cmds.push(`${vsysPrefix}address ${o.name} ip-netmask ${o.ipNetmask}`);
-      if (descr) cmds.push(`${vsysPrefix}address ${o.name} description "${descr.replace(/"/g, '\\"')}"`);
-      if (tag) cmds.push(`${vsysPrefix}address ${o.name} tag [ ${tag} ]`);
-    });
-    cmds.push(`${vsysPrefix}address-group ${group} static [ ${objects.map(o => o.name).join(' ')} ]`);
-    if (commit) cmds.push('commit');
-    if (configureWrap) cmds.push('exit');
+    const blocks = [];
+    if (configureWrap) {
+      blocks.push({ title: 'Enter configuration mode', meta: 'wait for the # prompt', lines: ['configure'] });
+    }
 
-    const text = cmds.join('\n');
-    output.innerHTML = highlight(text);
-    output.dataset.raw = text;
-    copyBtn.style.display = 'inline-flex';
+    const objectChunks = chunk(objects, OBJECTS_PER_BLOCK);
+    objectChunks.forEach((group40, i) => {
+      const lines = [];
+      group40.forEach(o => {
+        lines.push(`${vsysPrefix}address ${o.name} ip-netmask ${o.ipNetmask}`);
+        if (descr) lines.push(`${vsysPrefix}address ${o.name} description "${descr.replace(/"/g, '\\"')}"`);
+        if (tag) lines.push(`${vsysPrefix}address ${o.name} tag [ ${tag} ]`);
+      });
+      blocks.push({
+        title: objectChunks.length > 1 ? `Address objects (${i + 1} of ${objectChunks.length})` : 'Address objects',
+        meta: `${group40.length} object${group40.length === 1 ? '' : 's'}`,
+        lines
+      });
+    });
+
+    // Long member lists are split across several "set" lines; repeating
+    // "set address-group <name> static [ ... ]" adds to the existing group.
+    const groupLines = chunk(objects.map(o => o.name), MEMBERS_PER_LINE)
+      .map(names => `${vsysPrefix}address-group ${group} static [ ${names.join(' ')} ]`);
+    blocks.push({ title: 'Address group', meta: `${objects.length} member${objects.length === 1 ? '' : 's'}`, lines: groupLines });
+
+    if (commit) blocks.push({ title: 'Commit', meta: 'may take a while', lines: ['commit'] });
+    if (configureWrap) blocks.push({ title: 'Leave configuration mode', meta: 'optional', lines: ['exit'] });
+
+    currentBlocks = blocks;
+    output.innerHTML = blocks.map((b, i) => `
+      <div class="cmd-block">
+        <div class="cmd-head">
+          <span class="cmd-title">Step ${i + 1} · ${esc(b.title)}<span class="cmd-meta">${esc(b.meta)}</span></span>
+          <button class="btn btn-ghost cmd-copy" type="button" data-block="${i}">Copy</button>
+        </div>
+        <pre class="cmd-body">${highlight(b.lines.join('\n'))}</pre>
+      </div>`).join('');
+    pasteNote.hidden = false;
 
     summaryBar.innerHTML = `
       <span class="chip"><b>${objects.length}</b> object${objects.length === 1 ? '' : 's'}</span>
@@ -746,16 +815,28 @@
     setStatus(statusMsg, 'ok');
   }
 
-  copyBtn.addEventListener('click', async () => {
-    const raw = output.dataset.raw || '';
-    if (!raw) return;
+  // A trailing newline makes the last pasted line execute instead of
+  // sitting unsent at the prompt.
+  async function copyText(text, btn, label) {
     try {
-      await navigator.clipboard.writeText(raw);
-      copyBtn.textContent = 'Copied';
-      setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1400);
+      await navigator.clipboard.writeText(text + '\n');
+      btn.textContent = 'Copied';
+      setTimeout(() => { btn.textContent = label; }, 1400);
     } catch (e) {
       setStatus('Could not copy automatically — select the text manually.', 'err');
     }
+  }
+
+  output.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-block]');
+    if (!btn) return;
+    const block = currentBlocks[Number(btn.dataset.block)];
+    if (block) copyText(block.lines.join('\n'), btn, 'Copy');
+  });
+
+  copyAllBtn.addEventListener('click', () => {
+    const all = currentBlocks.flatMap(b => b.lines).join('\n');
+    if (all) copyText(all, copyAllBtn, 'Copy everything');
   });
 
   generateBtn.addEventListener('click', generate);
