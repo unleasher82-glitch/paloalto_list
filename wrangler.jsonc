@@ -1,0 +1,13 @@
+{
+  "name": "paloalto-bulk-objects-creator",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "observability": {
+    "enabled": true
+  }
+}
