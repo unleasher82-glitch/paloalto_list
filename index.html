@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PaloAlto Address Group Builder — PAN-OS set-format CLI Generator</title>
+<title>Palo Alto Address Group Builder — PAN-OS set-format CLI Generator</title>
 <meta name="description" content="Paste a list of IPs, get ready-to-paste PAN-OS set-format CLI that creates the address objects and the address group in one shot. Runs entirely in your browser — nothing is sent anywhere.">
 <link rel="canonical" href="https://paloalto.alizerotrust.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,7 @@
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "PaloAlto Address Group Builder",
+  "name": "Palo Alto Address Group Builder",
   "url": "https://paloalto.alizerotrust.com/",
   "description": "Paste a list of IPs, get ready-to-paste PAN-OS set-format CLI that creates the address objects and the address group in one shot. Runs entirely in your browser — nothing is sent anywhere.",
   "applicationCategory": "DeveloperApplication",
@@ -433,11 +433,26 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
   }
+
+:root,:root[data-theme="dark"]{color-scheme:dark;--bg:#0c1420;--surface:#131e2e;--surface-2:#182638;--border:#2b3b50;--border-strong:#43566e;--text:#e7eef8;--text-dim:#a6b7ca;--text-faint:#94a7bd;--accent:#72ddcf;--accent-strong:#72ddcf;--accent-soft:#183933;--danger:#ffb4ab;--danger-soft:#39232b;--focus:0 0 0 3px rgba(114,221,207,.22)}
+body{font-family:Arial,sans-serif;background:var(--bg)}
+.console-topbar{max-width:1320px;margin:auto;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);gap:20px}
+.console-topbar a{color:var(--text);text-decoration:none}.console-brand{font-weight:700;font-size:20px;letter-spacing:-.5px}.console-topbar .console-home{font-size:14px;color:var(--text-dim)}
+.console-layout{max-width:1320px;margin:auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;padding:28px 24px 48px}
+.console-sidebar{display:flex;flex-direction:column;gap:6px;align-self:start}.console-caption{color:var(--text-faint);font-size:11px;letter-spacing:1.6px;margin:8px 12px 12px}
+.console-sidebar a{box-sizing:border-box;display:flex;align-items:center;min-height:44px;padding:12px;border:1px solid transparent;border-radius:7px;color:var(--text-dim);text-decoration:none;font-size:14px;white-space:nowrap}
+.console-sidebar a:hover{background:var(--surface);color:var(--text)}.console-sidebar a[aria-current="page"]{background:var(--accent-soft);border-color:#31584f;color:var(--accent)}
+.wrap{min-width:0;width:100%;max-width:none;padding:0;margin:0}header.page{align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:24px}h1{font-family:Arial,sans-serif;font-size:30px;line-height:1.15;letter-spacing:-.7px}.tagline{line-height:1.6;max-width:650px}.brand-mark{background:var(--accent);border-radius:7px;box-shadow:none;flex-shrink:0}.panel{box-shadow:none;border-radius:7px;min-width:0}.panel-head{background:var(--surface)}input[type="text"],textarea,select{background:var(--bg)}.btn{font-family:Arial,sans-serif}.grid{gap:20px}.cmd-body{overflow-x:auto}
+.console-topbar a:focus-visible,.console-sidebar a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:1050px){.grid{grid-template-columns:1fr}}
+@media(max-width:760px){.console-topbar{padding:20px}.console-layout{grid-template-columns:1fr;gap:24px;padding:20px}.console-sidebar a{width:100%}.console-caption{margin-top:0}h1{font-size:26px}.brand{align-items:flex-start}}
+
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<header class="console-topbar"><a class="console-brand" href="https://alizerotrust.com/">AliZeroTrust</a><a class="console-home" href="https://alizerotrust.com/">All tools ↗</a></header>
+<div class="console-layout"><nav class="console-sidebar" aria-label="Tools"><span class="console-caption">ENGINEERING CONSOLE</span><a href="https://alizerotrust.com/">All tools</a><a href="https://paloalto.alizerotrust.com/" aria-current="page">Palo Alto Builder</a><a href="https://alizerotrust.com/tools/ip-cidr/">IP &amp; CIDR Toolkit</a></nav><main class="wrap">
   <header class="page">
     <div class="brand">
       <div class="brand-mark">
@@ -447,7 +462,7 @@
         </svg>
       </div>
       <div>
-        <h1>PaloAlto Address Group Builder</h1>
+        <h1>Palo Alto Address Group Builder</h1>
         <p class="tagline">Paste a list of IPs, name the group, get ready-to-paste PAN-OS CLI to create the address objects and the group in one shot.</p>
       </div>
     </div>
@@ -547,6 +562,7 @@
   <footer class="note">
     Paste the steps one at a time into the CLI on the target firewall, waiting for the prompt to return between pastes. Long lists are split into small steps because PAN-OS can reject lines from a very large single paste. Object names are shortened to PAN-OS's 63-character limit automatically. This runs entirely in your browser — nothing is sent anywhere.
   </footer>
+</main>
 </div>
 
 <script>
@@ -859,3 +875,4 @@
 </script>
 </body>
 </html>
+
