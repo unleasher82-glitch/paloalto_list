@@ -4,18 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Palo Alto Address Group Builder — PAN-OS set-format CLI Generator</title>
-<meta name="description" content="Paste a list of IPs, get ready-to-paste PAN-OS set-format CLI that creates the address objects and the address group in one shot. Runs entirely in your browser — nothing is sent anywhere.">
+<meta name="description" content="Paste a list of IPs, get ready-to-paste PAN-OS set-format CLI that creates the address objects and the address group in one shot. Address inputs and command output are processed locally in your browser.">
 <link rel="canonical" href="https://paloalto.alizerotrust.com/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Palo Alto Address Group Builder",
   "url": "https://paloalto.alizerotrust.com/",
-  "description": "Paste a list of IPs, get ready-to-paste PAN-OS set-format CLI that creates the address objects and the address group in one shot. Runs entirely in your browser — nothing is sent anywhere.",
+  "description": "Paste a list of IPs, get ready-to-paste PAN-OS set-format CLI that creates the address objects and the address group in one shot. Address inputs and command output are processed locally in your browser.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
   "offers": {
@@ -96,7 +93,7 @@
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-family: "Arial", system-ui, sans-serif;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
@@ -137,7 +134,7 @@
   .brand-mark svg { width: 20px; height: 20px; }
 
   h1 {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 1.4rem;
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -152,7 +149,7 @@
   }
 
   .platform-note {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.72rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -198,7 +195,7 @@
   }
 
   .step-tag {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.7rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -233,7 +230,7 @@
     border-radius: 7px;
     color: var(--text);
     padding: 0.6rem 0.7rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.88rem;
     resize: vertical;
   }
@@ -281,7 +278,7 @@
   }
 
   .btn {
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Arial", sans-serif;
     font-weight: 600;
     font-size: 0.88rem;
     border-radius: 7px;
@@ -317,7 +314,7 @@
 
   .status-line {
     font-size: 0.78rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     min-height: 1.1em;
     color: var(--text-faint);
   }
@@ -329,7 +326,7 @@
     border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
     border-radius: 7px;
     padding: 0.7rem 0.85rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.78rem;
     color: var(--danger);
     display: none;
@@ -346,7 +343,7 @@
     padding: 0 1.3rem 1.1rem;
   }
   .chip {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.74rem;
     background: var(--surface-2);
     border: 1px solid var(--border);
@@ -377,7 +374,7 @@
   }
   .cmd-title { font-size: 0.82rem; font-weight: 600; }
   .cmd-meta {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.72rem;
     color: var(--text-faint);
     margin-left: 0.5rem;
@@ -387,7 +384,7 @@
   .cmd-body {
     margin: 0;
     padding: 0.9rem 1.3rem 1rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     font-size: 0.82rem;
     line-height: 1.65;
     white-space: pre-wrap;
@@ -424,7 +421,7 @@
     line-height: 1.6;
   }
   footer.note code {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "ui-monospace", monospace;
     background: var(--surface-2);
     border-radius: 4px;
     padding: 0.1rem 0.35rem;
@@ -447,12 +444,27 @@ body{font-family:Arial,sans-serif;background:var(--bg)}
 @media(max-width:1050px){.grid{grid-template-columns:1fr}}
 @media(max-width:760px){.console-topbar{padding:20px}.console-layout{grid-template-columns:1fr;gap:24px;padding:20px}.console-sidebar a{width:100%}.console-caption{margin-top:0}h1{font-size:26px}.brand{align-items:flex-start}}
 
+
+/* Shared console navigation and readable supporting text */
+.console-sidebar,#az-preview .console-sidebar{background:#131e2e;border-right:1px solid #2b3b50;padding:26px 14px}
+.console-layout,#az-preview .console-layout{max-width:1320px;margin:auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:0;padding:0}
+.console-sidebar nav,#az-preview .console-sidebar nav{display:flex;flex-direction:column;gap:6px;margin:0;width:100%}
+.console-sidebar a,#az-preview .console-sidebar a{box-sizing:border-box;display:block;width:100%;min-height:44px;padding:12px 10px;margin:0;border:0;border-left:2px solid transparent;border-radius:0;color:#b8c8da;font:14px/20px Arial,sans-serif;text-decoration:none;white-space:nowrap}
+.console-sidebar a[aria-current="page"],#az-preview .console-sidebar a[aria-current="page"]{background:#0c1420;color:#72ddcf;border-left-color:#72ddcf}
+.console-sidebar a:hover,#az-preview .console-sidebar a:hover{background:#0c1420;color:#e7eef8}
+.console-label,#az-preview .console-label{font:12px/1.5 Arial,sans-serif;letter-spacing:1.2px;color:#b8c8da;margin:0 10px 12px;text-transform:uppercase}
+.shared-topbar,#az-preview .shared-topbar{box-sizing:border-box;max-width:1320px;margin:auto;background:#131e2e;padding:22px 34px;border-bottom:1px solid #2b3b50;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.shared-topbar a,#az-preview .shared-topbar a{color:#e7eef8;text-decoration:none;font:14px/1.6 Arial,sans-serif}.shared-topbar .site-brand,#az-preview .shared-topbar .site-brand{font-size:20px;font-weight:600;letter-spacing:-.5px}.shared-topbar nav,#az-preview .shared-topbar nav{display:flex;gap:22px;margin:0}
+.wrap{box-sizing:border-box;padding:34px 28px;min-width:0}
+.help,.hint,.tag,.features,.notice,.note,.platform-note,#az-preview .tag,#az-preview .features,#az-preview .sub{font-size:14px!important;color:#b8c8da!important}
+.processing{margin-top:28px;padding:20px;border:1px solid #2b3b50;border-radius:7px;background:#131e2e;font:14px/1.65 Arial,sans-serif;color:#b8c8da}.processing h2{font:600 20px/1.3 Arial,sans-serif;color:#e7eef8;margin:0 0 12px}.processing p{margin:0 0 10px}
+@media(max-width:760px){.console-layout,#az-preview .console-layout{display:block}.console-sidebar,#az-preview .console-sidebar{border-right:0;border-bottom:1px solid #2b3b50;padding:18px}.shared-topbar,#az-preview .shared-topbar{padding:18px 22px}.wrap{padding:28px 18px}.console-sidebar a,#az-preview .console-sidebar a{white-space:normal}.console-label{display:block}}
 </style>
 </head>
 <body>
 
-<header class="console-topbar"><a class="console-brand" href="https://alizerotrust.com/">AliZeroTrust</a><a class="console-home" href="https://alizerotrust.com/">All tools ↗</a></header>
-<div class="console-layout"><nav class="console-sidebar" aria-label="Tools"><span class="console-caption">ENGINEERING CONSOLE</span><a href="https://alizerotrust.com/">All tools</a><a href="https://paloalto.alizerotrust.com/" aria-current="page">Palo Alto Builder</a><a href="https://alizerotrust.com/tools/ip-cidr/">IP &amp; CIDR Toolkit</a></nav><main class="wrap">
+<header class="shared-topbar"><a class="site-brand" href="https://alizerotrust.com/">AliZeroTrust</a><nav aria-label="Main navigation"><a href="https://alizerotrust.com/#az-tools">Tools</a><a href="https://alizerotrust.com/#az-privacy">Security &amp; privacy</a></nav></header>
+<div class="console-layout"><aside class="console-sidebar"><nav aria-label="Engineering tools"><div class="console-label">Engineering tools</div><a href="https://alizerotrust.com/">All tools</a><a href="https://paloalto.alizerotrust.com/" aria-current="page">Palo Alto Builder</a><a href="https://alizerotrust.com/tools/ip-cidr/">IP &amp; CIDR Toolkit</a></nav></aside><main class="wrap">
   <header class="page">
     <div class="brand">
       <div class="brand-mark">
@@ -480,7 +492,7 @@ body{font-family:Arial,sans-serif;background:var(--bg)}
         <div>
           <label for="groupName">Address group name</label>
           <input type="text" id="groupName" placeholder="e.g. BLOCKLIST-EXTERNAL" autocomplete="off" spellcheck="false">
-          <p class="hint">Used as-is in <code style="font-family:'IBM Plex Mono',monospace">set address-group</code>. No spaces — PAN-OS will reject them.</p>
+          <p class="hint">Used as-is in <code style="font-family:'ui-monospace',monospace">set address-group</code>. No spaces — PAN-OS will reject them.</p>
         </div>
 
         <div>
@@ -490,7 +502,7 @@ body{font-family:Arial,sans-serif;background:var(--bg)}
 203.0.113.10  vendor-vpn-endpoint
 198.51.100.0/28
 # lines starting with # are ignored" spellcheck="false"></textarea>
-          <p class="hint">One IP per line, or several separated by commas on one line — both can be mixed. Plain IPs, CIDR (<code style="font-family:'IBM Plex Mono',monospace">/24</code>), or <code style="font-family:'IBM Plex Mono',monospace">IP&nbsp;name</code> to set a custom object name. Blank lines and <code style="font-family:'IBM Plex Mono',monospace">#</code> comments are skipped.</p>
+          <p class="hint">One IP per line, or several separated by commas on one line — both can be mixed. Plain IPs, CIDR (<code style="font-family:'ui-monospace',monospace">/24</code>), or <code style="font-family:'ui-monospace',monospace">IP&nbsp;name</code> to set a custom object name. Blank lines and <code style="font-family:'ui-monospace',monospace">#</code> comments are skipped.</p>
         </div>
 
         <fieldset>
@@ -519,18 +531,18 @@ body{font-family:Arial,sans-serif;background:var(--bg)}
           </div>
           <div class="check-row">
             <input type="checkbox" id="optConfigureWrap" checked>
-            <label for="optConfigureWrap">Enter configuration mode automatically (adds <code style="font-family:'IBM Plex Mono',monospace">configure</code> at the top)</label>
+            <label for="optConfigureWrap">Enter configuration mode automatically (adds <code style="font-family:'ui-monospace',monospace">configure</code> at the top)</label>
           </div>
           <div class="check-row">
             <input type="checkbox" id="optCommit">
-            <label for="optCommit">Append <code style="font-family:'IBM Plex Mono',monospace">commit</code> at the end</label>
+            <label for="optCommit">Append <code style="font-family:'ui-monospace',monospace">commit</code> at the end</label>
           </div>
           <div class="check-row">
             <input type="checkbox" id="optVsys">
             <label for="optVsys">Target a specific vsys / virtual system</label>
           </div>
           <input type="text" id="vsysName" placeholder="vsys name, e.g. vsys1" style="display:none; margin-top:0.35rem;" autocomplete="off" spellcheck="false">
-          <p class="hint">The generated <code style="font-family:'IBM Plex Mono',monospace">set</code> commands only work in configuration mode (prompt ends in <code style="font-family:'IBM Plex Mono',monospace">#</code>, not <code style="font-family:'IBM Plex Mono',monospace">&gt;</code>). Leave the box above checked unless you're pasting into a script that already runs <code style="font-family:'IBM Plex Mono',monospace">configure</code> itself.</p>
+          <p class="hint">The generated <code style="font-family:'ui-monospace',monospace">set</code> commands only work in configuration mode (prompt ends in <code style="font-family:'ui-monospace',monospace">#</code>, not <code style="font-family:'ui-monospace',monospace">&gt;</code>). Leave the box above checked unless you're pasting into a script that already runs <code style="font-family:'ui-monospace',monospace">configure</code> itself.</p>
         </fieldset>
 
         <div class="actions">
@@ -560,9 +572,9 @@ body{font-family:Arial,sans-serif;background:var(--bg)}
   </div>
 
   <footer class="note">
-    Paste the steps one at a time into the CLI on the target firewall, waiting for the prompt to return between pastes. Long lists are split into small steps because PAN-OS can reject lines from a very large single paste. Object names are shortened to PAN-OS's 63-character limit automatically. This runs entirely in your browser — nothing is sent anywhere.
+    Paste the steps one at a time into the CLI on the target firewall, waiting for the prompt to return between pastes. Long lists are split into small steps because PAN-OS can reject lines from a very large single paste. Object names are shortened to PAN-OS's 63-character limit automatically. Address inputs and command output are processed locally in your browser.
   </footer>
-</main>
+<section class="processing" id="processing"><h2>Data processing &amp; privacy</h2><p>Address inputs and generated results are processed in your browser. These tools do not submit them to a server or apply changes to a firewall.</p><p>The pages contain no application analytics or tracking scripts and load no external fonts. Cloudflare hosts the site and receives normal web requests, including connection information needed to serve the pages.</p><p>Copy and download actions happen only when you choose them. Review generated output before using it in configuration.</p></section></main>
 </div>
 
 <script>
