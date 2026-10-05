@@ -82,43 +82,16 @@ function applyAccessibilityFixes(html) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request) {
     const url = new URL(request.url);
-
-    if (request.method === "GET" && url.pathname === "/llms.txt") {
-      return withHeaders(new Response(LLMS_TXT, {
-        status: 200,
-        headers: {
-          "Content-Type": "text/plain; charset=utf-8",
-          "Cache-Control": "public, max-age=3600",
-        },
-      }));
-    }
-
-    // Delegate all existing page, redirect, robots, sitemap and 404 routing
-    // to the unchanged static asset service.
-    const response = await env.ASSETS.fetch(request);
-
-    if (
-      request.method === "GET" &&
-      response.status === 200 &&
-      (url.pathname === "/" || url.pathname === "/index.html") &&
-      (response.headers.get("Content-Type") || "").includes("text/html")
-    ) {
-      const html = applyAccessibilityFixes(await response.text());
-      const headers = new Headers(response.headers);
-      // The representation changed; asset length and validators no longer apply.
-      headers.delete("Content-Length");
-      headers.delete("Content-Encoding");
-      headers.delete("ETag");
-      headers.delete("Last-Modified");
-      return withHeaders(new Response(html, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
-      }));
-    }
-
-    return withHeaders(response);
+    const base = "https://alizerotrust.com/tools/paloalto-address-builder/";
+    const shared = new Set(["/robots.txt", "/sitemap.xml", "/llms.txt"]);
+    const target = shared.has(url.pathname)
+      ? "https://alizerotrust.com" + url.pathname
+      : base + ((url.pathname === "/" || url.pathname === "/index.html") ? "" : url.pathname.slice(1));
+    return withHeaders(new Response(null, {
+      status: 301,
+      headers: { Location: target + url.search, "Cache-Control": "public, max-age=3600" }
+    }));
   },
 };
