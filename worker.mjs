@@ -18,6 +18,8 @@ const LLMS_TXT = `# Palo Alto Address Group Builder (AliZeroTrust)
 - [IP & CIDR Toolkit](https://alizerotrust.com/tools/ip-cidr/): Subnet calculation, IP range to CIDR conversion, exact CIDR aggregation.
 `;
 
+const SOCIAL_IMAGE_META = "<meta property=\"og:image\" content=\"https://alizerotrust.com/og-image.png\">\n<meta property=\"og:image:type\" content=\"image/png\">\n<meta property=\"og:image:width\" content=\"1200\">\n<meta property=\"og:image:height\" content=\"630\">\n<meta property=\"og:image:alt\" content=\"AliZeroTrust: free network and firewall tools for network and security engineers\">\n<meta property=\"og:locale\" content=\"en_US\">\n<meta name=\"twitter:image\" content=\"https://alizerotrust.com/og-image.png\">\n<meta name=\"twitter:image:alt\" content=\"AliZeroTrust: free network and firewall tools for network and security engineers\">\n";
+
 const MOBILE_TARGETS_CSS = `
 /* Minimum interactive target size below 600px. */
 @media (max-width: 599.98px) {
@@ -74,7 +76,9 @@ function applyAccessibilityFixes(html) {
       : input.replace("<input", '<input aria-label="Virtual system name"')
   );
   // Use the existing inline style element; no tool JavaScript is changed.
-  return html.replace("</style>", MOBILE_TARGETS_CSS + "</style>");
+  return html.replace("</style>", MOBILE_TARGETS_CSS + "</style>")
+    .replace('<meta name="twitter:card" content="summary">', '<meta name="twitter:card" content="summary_large_image">')
+    .replace("</head>", SOCIAL_IMAGE_META + "</head>");
 }
 
 export default {
